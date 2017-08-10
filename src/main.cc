@@ -7,6 +7,7 @@ using namespace std;
 using namespace gomibako;
 
 string comment_html;
+string custom_sidebar_html;
 
 extern"C" bool initialize(ThemeConfiguration &config) {
     config.articles_per_page = 10;
@@ -18,17 +19,24 @@ extern"C" bool initialize(ThemeConfiguration &config) {
         {"css/normalize.css", "text/css"},
         {"img/404.jpg", "image/jpeg"},
         {"fonts/icomoon.svg", "image/svg+xml"},
-        {"fonts/icomoon.ttf", "application/font-sfnt"},
+        {"fonts/icomoon.ttf", "font/ttf"},
         {"fonts/icomoon.eot", "application/vnd.ms-fontobject"},
-        {"fonts/icomoon.woff", "application/font-woff"}
+        {"fonts/icomoon.woff", "font/woff"}
     };
     config.error_codes = {404};
-    fstream fs("comment.html");
-    if (fs) {
+    ifstream fs1("comment.html");
+    if (fs1) {
         ostringstream ss;
-        ss << fs.rdbuf();
+        ss << fs1.rdbuf();
         comment_html = ss.str();
-        fs.close();
+        fs1.close();
+    }
+    ifstream fs2("custom_sidebar.html");
+    if (fs2) {
+        ostringstream ss;
+        ss << fs2.rdbuf();
+        custom_sidebar_html = ss.str();
+        fs2.close();
     }
     return true;
 }

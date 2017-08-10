@@ -7,6 +7,8 @@
 
 using namespace gomibako;
 
+extern std::string custom_sidebar_html;
+
 enum class PageType {
     Page, Article, CustomPage, Archives, Tag, Tags, Error
 };
@@ -15,6 +17,21 @@ inline void sidebar(std::ostringstream &out, const SiteInformation &site_informa
                     std::shared_ptr<URLMaker> url_maker) {
     out <<
 R"(<div id="secondary">
+    <section class="widget">
+        <h3 class="widget-title">Recent Articles</h3>
+        <ul class="widget-list">
+)";
+    site_information.get_recent_articles(5);
+    for (auto &&i : site_information.recent_articles) {
+        out << "<li><a href=\"" << url_maker->url_article(i.id) << "\">" << i.title
+            << "</a></li>\n";
+    }
+    out <<
+R"(
+        </ul>
+    </section>)";
+    out <<
+R"(
     <section class="widget">
         <h3 class="widget-title">Tags</h3>
 )";
@@ -26,10 +43,10 @@ R"(<div id="secondary">
     }
     out <<
 R"(
-    </section>
-)";
+    </section>)";
+    out << custom_sidebar_html;
     out <<
-R"(<div id="secondary">
+R"(
     <section class="widget">
         <h3 class="widget-title">Site</h3>
         <ul class="widget-list">
@@ -78,7 +95,7 @@ R"(                <p class="description">)" << site_information.description << 
     }
     out << R"( href=")" << url_maker->url_index() << R"(">Blog</a>)";
     out << "<a";
-    if (page_type == PageType::Tags) {
+    if (page_type == PageType::Tags || page_type == PageType::Tag) {
         out << R"( class="current")";
     }
     out << R"( href=")" << url_maker->url_tags() << R"(">Tags</a>)";
